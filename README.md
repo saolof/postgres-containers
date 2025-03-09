@@ -1,3 +1,25 @@
+This is a friendly fork of the cloudnative-pg image directory
+where the only change to the images is to add a number
+of frequently needed extensions.
+
+The extensions are:
+
+* pgcron, partman and pgrepack for ops automation
+* pgtap and semver to make migration CI easier
+* pgjsonschema to make json columns less of a headache
+* all extensions needed by powa for observability
+* pgvectorscale to make pgvector 1-2 orders of magnitude more scalable
+
+The goal is to have a + only diff and to regularly rebase this on top
+of the repo this is cloned from, though this is still in development
+and I haven't looked enough at the new build process for standard images yet
+
+
+The only additional features that this adds on top of the vanilla cloudnativepg images
+are ones that directly make the database easier to maintain and which don't require a plan to
+migrate away from. If you want more customization than this, I'd suggest looking at Tembo's stacks.
+
+..................
 > **IMPORTANT:** As of January 2025, we have transitioned to a new image build
 > process (see issue [#132](https://github.com/cloudnative-pg/postgres-containers/issues/132)
 > for details). Previously, the images were based on the

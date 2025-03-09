@@ -14,19 +14,41 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
+FROM curlimages/curl as downloader
+
+RUN curl --silent \
+         --fail \
+         --location \
+         --output artifact.zip \
+         "https://github.com/timescale/pgvectorscale/releases/download/0.6.0/pgvectorscale-0.6.0-pg$(echo 13.20-bookworm | awk -F. '{print $1}')-amd64.zip" \
+				&& unzip artifact.zip && \
+				rm artifact.zip && \
+				curl --silent \
+         --fail \
+         --location \
+				 --output pg_jsonschema-amd64-linux-gnu.deb \
+        "https://github.com/supabase/pg_jsonschema/releases/download/v0.3.3/pg_jsonschema-v0.3.3-pg$(echo 13.20-bookworm | awk -F. '{print $1}')-amd64-linux-gnu.deb"
+
+
+
+
+
 FROM postgres:13.20-bookworm
 
 # Do not split the description, otherwise we will see a blank space in the labels
 LABEL name="PostgreSQL Container Images" \
       vendor="The CloudNativePG Contributors" \
       version="${PG_VERSION}" \
-      release="3" \
+      release="22" \
       summary="PostgreSQL Container images." \
       description="This Docker image contains PostgreSQL and Barman Cloud based on Postgres 13.20-bookworm."
 
 LABEL org.opencontainers.image.description="This Docker image contains PostgreSQL and Barman Cloud based on Postgres 13.20-bookworm."
 
 COPY requirements.txt /
+COPY --from=downloader /home/curl_user .
+
 
 # Install additional extensions
 RUN set -xe; \
@@ -35,7 +57,21 @@ RUN set -xe; \
 		"postgresql-${PG_MAJOR}-pgaudit" \
 		"postgresql-${PG_MAJOR}-pgvector" \
 		"postgresql-${PG_MAJOR}-pg-failover-slots" \
+    "postgresql-${PG_MAJOR}-repack" \
+    "postgresql-${PG_MAJOR}-cron" \
+    "postgresql-${PG_MAJOR}-partman" \
+    "postgresql-${PG_MAJOR}-pgtap" \
+    "postgresql-${PG_MAJOR}-semver" \
+    "postgresql-${PG_MAJOR}-powa" \
+    "postgresql-${PG_MAJOR}-pg-qualstats" \
+    "postgresql-${PG_MAJOR}-pg-stat-kcache" \
+    "postgresql-${PG_MAJOR}-pg-wait-sampling" \
+    "postgresql-${PG_MAJOR}-pg-track-settings" \
+    "postgresql-${PG_MAJOR}-hypopg" \
+    "pgbackrest" \
 	; \
+  dpkg --install --force-depends --force-not-root --force-overwrite pgvectorscale*amd64.deb; \
+  dpkg --install --force-depends --force-not-root --force-overwrite pg_jsonschema*amd64-linux-gnu.deb; \
 	rm -fr /tmp/* ; \
 	rm -rf /var/lib/apt/lists/*;
 

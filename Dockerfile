@@ -27,7 +27,19 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends locales-all \
       "postgresql-${PG_MAJOR}-pgaudit" \
       "postgresql-${PG_MAJOR}-pgvector" \
-      "postgresql-${PG_MAJOR}-pg-failover-slots" && \
+      "postgresql-${PG_MAJOR}-pg-failover-slots" \
+      "postgresql-${PG_MAJOR}-repack" \
+      "postgresql-${PG_MAJOR}-partman" \
+      "postgresql-${PG_MAJOR}-cron" \
+      "postgresql-${PG_MAJOR}-pgtap" \
+      "postgresql-${PG_MAJOR}-semver" \
+      "postgresql-${PG_MAJOR}-powa" \
+      "postgresql-${PG_MAJOR}-pg-qualstats" \
+      "postgresql-${PG_MAJOR}-pg-stat-kcache" \
+      "postgresql-${PG_MAJOR}-pg-wait-sampling" \
+      "postgresql-${PG_MAJOR}-pg-track-settings" \
+      "postgresql-${PG_MAJOR}-hypopg" \
+      "pgbackrest" && \
     apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false && \
     rm -rf /var/lib/apt/lists/* /var/cache/* /var/log/*
 
